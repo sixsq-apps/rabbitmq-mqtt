@@ -1,0 +1,31 @@
+#!/bin/bash -xe
+#
+# Push images for all built platforms as well as the manifest
+#
+platforms=(amd64 arm64 arm)
+
+# MANIFEST=${DOCKER_ORG}/${DOCKER_IMAGE}:${DOCKER_TAG}
+
+echo "[push] - DOCKER_REPO: ${DOCKER_REPO}"
+echo "[push] - IMAGE_NAME: ${IMAGE_NAME}"
+
+MANIFEST=${DOCKER_REPO}:${DOCKER_TAG}
+DOCKER_IMAGE=${DOCKER_REPO##*/}
+
+manifest_args=(${MANIFEST})
+
+# push all generated images
+for platform in "${platforms[@]}"; do
+    docker push ${MANIFEST}-${platform}
+    manifest_args+=("${MANIFEST}-${platform}")
+done
+
+# create manifest, update, and push
+export DOCKER_CLI_EXPERIMENTAL=enabled
+docker manifest create "${manifest_args[@]}"
+
+for platform in "${platforms[@]}"; do
+    docker manifest annotate ${MANIFEST} ${MANIFEST}-${platform} --arch ${platform}
+done
+
+docker manifest push --purge ${MANIFEST}
