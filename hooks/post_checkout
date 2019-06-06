@@ -2,7 +2,19 @@
 #
 # Downloads a local copy of qemu on docker-hub build machines
 #
+ls -l /usr/bin/qemu-* || true
+ls -l /proc/sys/fs/binfmt_misc || true
+
+apt-get update || true
+apt-get install --no-install-recommends -y binfmt-support qemu qemu-user-static || true
+mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc/ || true
+
+ls -l /usr/bin/qemu-* || true
+ls -l /proc/sys/fs/binfmt_misc || true
 
 for arch in aarch64 arm; do
-    curl -L https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-${arch}.tar.gz | tar zxvf - -C . && mv qemu-3.0.0+resin-${arch}/qemu-arm-static .
+    curl -L https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-${arch}.tar.gz | tar zxvf - -C . && mv qemu-3.0.0+resin-${arch}/qemu-${arch}-static .
 done
+
+ls -l /usr/bin/qemu-* || true
+ls -l /proc/sys/fs/binfmt_misc || true

@@ -9,8 +9,10 @@ platforms=(amd64 arm64 arm)
 echo "[push] - DOCKER_REPO: ${DOCKER_REPO}"
 echo "[push] - IMAGE_NAME: ${IMAGE_NAME}"
 
+IFS_save=$IFS
 IFS='/'
 read -r DOCKER_HUB DOCKER_ORG DOCKER_IMAGE <<< "${DOCKER_REPO}"
+IFS=$IFS_save
 
 MANIFEST=${DOCKER_ORG}/${DOCKER_IMAGE}:${DOCKER_TAG}
 
